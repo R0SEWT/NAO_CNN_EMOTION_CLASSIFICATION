@@ -8,18 +8,21 @@ import json
 # Cambia por la IP de tu PC con el servidor Flask
 API_EMOCION = "http://172.25.88.231:5000/emocion"
 NAO_IP = "192.168.108.36"
+NAO_IP = "127.0.0.1"
+PUERTO = 9559
+PUERTO = 49940
 
 
-tts = ALProxy("ALTextToSpeech", NAO_IP, 9559)
+tts = ALProxy("ALTextToSpeech", NAO_IP, PUERTO)
 
-motion = ALProxy("ALMotion", NAO_IP, 9559)
+motion = ALProxy("ALMotion", NAO_IP, PUERTO)
 motion.stiffnessInterpolation("Body", 0.0, 1.0)
 motion.stiffnessInterpolation("Body", 1.0, 1.0)  # Activa todos los motores
 
 
 
 def capturar_imagen():
-    camProxy = ALProxy("ALVideoDevice", NAO_IP, 9559)
+    camProxy = ALProxy("ALVideoDevice", NAO_IP, PUERTO)
     resolution = 2  # 640x480
     colorSpace = 11  # RGB
     fps = 10
