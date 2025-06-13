@@ -80,3 +80,7 @@ Se observó la respuesta del modelo y del robot para cada caso.
 
 Se busca explorar cómo los sistemas de detección emocional pueden integrarse en contextos de robótica social como herramientas de soporte para niños con TEA, siguiendo enfoques vicarios.
 
+## Observaciones
+
+Nao puede prender los ojos y parlantes (util para emular cargas y mostrar alertas)
+Asimismo detecta caras `ALVideoDevice`. Tmb detecta emociones usando voz con `ALMood`. Seria conveniente incluirlo en los exprimentos
