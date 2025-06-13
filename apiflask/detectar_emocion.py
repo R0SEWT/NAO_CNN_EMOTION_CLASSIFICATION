@@ -27,6 +27,7 @@ def detectar_emocion_desde_array(frame):
     face = np.expand_dims(face, axis=(0, -1))
 
     preds = model.predict(face)
+    print("Predicciones:", preds)
     return emotions[np.argmax(preds)]
 
 # Función opcional para testear con webcam (solo en desarrollo local)

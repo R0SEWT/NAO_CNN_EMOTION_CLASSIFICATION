@@ -36,10 +36,12 @@ def emocion():
         print(f"[{timestamp}] Emoción: {emocion} -> guardada en {filename}")
 
         # Normalizar emoción para NAO
-        if emocion in ("happy", "surprise"):
+        if emocion in ("happy"):
             return "happy"
         elif emocion in ("angry", "sad", "fear", "disgust"):
-            return "confused"
+            return emocion
+        elif emocion in ("surprise", "neutral"):
+            return "neutral"
         return "no_face"
 
     except Exception as e:
