@@ -1,50 +1,82 @@
-🧠 Descripción del Proyecto
+# NAO Emotion Detection System
 
-NAO Emocional Interactivo
+Este proyecto implementa un sistema de detección emocional utilizando un robot NAO, visión por computadora y un modelo ligero de clasificación de emociones.
 
-Objetivo:
-Permitir que el robot NAO detecte emociones humanas (como felicidad, tristeza o confusión) y reaccione de forma adecuada, usando gestos corporales y habla.
-🧩 Componentes del Sistema
-1. NAO (Python 2.7 con NAOqi)
+Está orientado a explorar aplicaciones de soporte psicoeducativo para niños con TEA (Trastorno del Espectro Autista), integrando componentes de Machine Learning y Robótica Social.
 
-    Captura una imagen con su cámara interna usando ALVideoDevice.
+## 🚀 Descripción General
 
-    Codifica la imagen en base64.
+El flujo del sistema es:
 
-    Envía la imagen vía HTTP POST a un servidor Flask para clasificar la emoción.
+1. El NAO captura una imagen desde su cámara frontal.
+2. La imagen se codifica en base64 y se envía vía HTTP a una API Flask.
+3. Un modelo de ML en la laptop analiza la emoción facial en la imagen.
+4. La respuesta emocional se devuelve al NAO, que reacciona con voz y gestos expresivos.
 
-    Recibe una emoción (happy, confused, no_face, etc.).
+## 🎯 Objetivo
 
-    Ejecuta un comportamiento preprogramado (hablar + mover brazos o cabeza) según la emoción detectada.
+Comparar el rendimiento de distintos métodos de reconocimiento emocional bajo diferentes condiciones de entrada (resolución, iluminación, posición de rostro), evaluando su utilidad para interacciones con niños autistas mediante un robot humanoide limitado en locomoción.
 
-2. Servidor Flask (Python 3.9)
+## 🧠 Tecnologías utilizadas
 
-    Recibe la imagen en base64 desde NAO.
+- Robot: NAO (versión con Python 2.7) (Flask)
+- API backend: Flask (Python 3.10)
+- Modelo: CNN ligero para FER (TDB)
+- Librerías:
+  - `pynaoqi`
+  - `Pillow`
+  - `Flask`, `NumPy`, `OpenCV`
+- Comunicación: HTTP (sin sockets ni ROS)
 
-    Decodifica y procesa la imagen.
+## 📁 Estructura del repositorio
 
-    Usa un modelo preentrenado (modelo_emocion.h5) para detectar emociones.
+```
+.
+├── main.py                 # Script que corre en NAO (Py2.7)
+├── run.sh                 # Script de ejecución
+├── modelo\_emocion.h5      # Modelo Keras para clasificación emocional
+├── apiflask/              # Carpeta con backend Flask en Py3 (modelo y API)
+├── train\_model.ipynb      # Entrenamiento o prueba del modelo
+├── readme.md              
 
-    Devuelve la emoción clasificada al NAO.
+````
 
-    Guarda un log local con la imagen clasificada y su etiqueta, con timestamp.
+## ⚙️ Requisitos
 
-🎯 Flujo General
+TODO: add requirements 2.7 y 3.10
 
-    NAO dice una frase y captura una imagen.
 
-    La envía al servidor.
+## ▶️ Uso
 
-    El servidor responde con la emoción.
+TODO: Detallar uso
 
-    NAO responde con un gesto y voz.
+1. Ejecutar la API Flask en la laptop:
 
-    La laptop guarda un log con la imagen.
+```bash
+cd apiflask
+python app.py
+```
 
-🛠️ Tecnologías
-Componente	Tecnología
-Robot	NAOqi SDK (Python 2.7)
-Backend	Flask (Python 3.9)
-IA	Keras + TensorFlow (modelo .h5)
-Comunicación	HTTP POST (json con base64)
-Logs	Archivos .jpg con nombre timestamp_emocion.jpg
+2. Ejecutar el script en el NAO (configurar IP del NAO):
+
+```bash
+./run.sh
+```
+
+## 🧪 Pruebas
+
+Se probaron distintos escenarios controlados variando: (TDB)
+
+* Iluminación ambiente
+* Resolución de captura
+* Angulación del rostro
+
+
+Se observó la respuesta del modelo y del robot para cada caso.
+
+(Metricas, diseno de exprimento)
+
+## 📚 Enfoque académico
+
+Se busca explorar cómo los sistemas de detección emocional pueden integrarse en contextos de robótica social como herramientas de soporte para niños con TEA, siguiendo enfoques vicarios.
+
