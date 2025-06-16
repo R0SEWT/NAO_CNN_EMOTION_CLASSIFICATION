@@ -45,6 +45,7 @@ Comparar el rendimiento de tres técnicas de reconocimiento emocional —CNN, ke
 ├── main.py                 # Script que corre en NAO (Py2.7)
 ├── run.sh                 # Script de ejecución     
 ├── apiflask/              # Carpeta con backend Flask en Py3 (uso demodelo y API)
+├── pynaoqi-python2.7-2.8.6.23-linux64-20191127_152327/
 ├── readme.md      
         
 ```

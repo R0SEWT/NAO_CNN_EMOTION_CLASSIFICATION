@@ -8,7 +8,7 @@ import os
 from detectar_emocion import detectar_emocion_desde_array
 
 app = Flask(__name__)
-LOG_DIR = "logs_img"
+LOG_DIR = "apiflask/logs_img"
 
 # Asegura que exista la carpeta de logs
 if not os.path.exists(LOG_DIR):
