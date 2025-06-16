@@ -6,3 +6,4 @@ pillow
 mediapipe
 scikit-learn
 torch
+torchvision
