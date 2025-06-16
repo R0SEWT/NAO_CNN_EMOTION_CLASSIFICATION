@@ -1,11 +1,42 @@
+# ▒▒▒ Python ▒▒▒
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+*.env
+*.DS_Store
+*.egg-info/
+*.swp
+
+# ▒▒▒ API Flask ▒▒▒
 apiflask/__pycache__/
 apiflask/*.pyc
 apiflask/*.pyo
 apiflask/logs_img/
 
+# ▒▒▒ Modelos / Outputs ▒▒▒
+modelo_emocion.h5
+*.h5
+*.tflite
+*.onnx
+*.pb
+*.pth
+*.joblib
+
+# ▒▒▒ Logs generales ▒▒▒
+logs_img/
+logs/
+
+# ▒▒▒ Archivos grandes innecesarios ▒▒▒
 pynaoqi-python2.7-2.8.6.23-linux64-20191127_152327/
 pynaoqi-python2.7-2.8.6.23-linux64-20191127_152327.tar.gz
-
 robot-settings_linux64_1.2.1-6c3a1204f_20210902-182550_setup.run
 
-logs_img/
+ml_models/data/kers2013/
+
+# ▒▒▒ Otros ▒▒▒
+modelo_emocion.h5
+
+*/tasks.md
