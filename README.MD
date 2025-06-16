@@ -96,3 +96,12 @@ Este proyecto se enmarca como investigación aplicada de carácter comparativo, 
 ## 📊 Resultados comparativos (TBD)
 
 Se incluirán tablas comparativas de rendimiento por técnica y escenario. Las pruebas abarcan desde entornos controlados hasta validaciones ecológicas con niños en el FabLab.
+
+
+| Técnica | Tipo de modelo | Dataset base | Tamaño imagen / input | Tiempo estimado entrenamiento | Precisión esperada (aprox.) | Robustez en condiciones reales | Velocidad de inferencia |
+| :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- |
+| CNN (MobileNetV2) | Preentrenado \+ Fine-tuning | FER2013 | 224×224 | 5–12 min | 75–85% | Media | Rápida |
+| CNN (VGG19) | Preentrenado \+ Fine-tuning | FER2013 | 224×224 | 12–20 min | 78–88% | Baja–Media | Lenta |
+| CNN propia | Desde cero | FER2013 | 48×48 | 3–8 min | 65–75% | Baja | Muy rápida |
+| Keypoints faciales | MLP / SVM | FER2013 (keypoints extraídos) | 468 puntos (x,y) | \<1 min | 65–80% | Alta | Muy rápida |
+| Keypoints posturales | MLP / SVM | FER2013 / videos propios | \~33 puntos (x,y) | \<1 min | 55–70% | Media–Alta | Muy rápida |
