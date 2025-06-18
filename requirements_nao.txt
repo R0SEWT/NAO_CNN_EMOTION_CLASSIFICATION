@@ -1,0 +1,2 @@
+pynaoqi
+Pillow==6.2.2  # Compatible con 2.7

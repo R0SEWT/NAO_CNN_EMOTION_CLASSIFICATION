@@ -34,24 +34,44 @@ Comparar el rendimiento de tres técnicas de reconocimiento emocional —CNN, ke
 ## 📁 Estructura del repositorio
 
 ```
-├── models/ # Modelos para clasificación emocional
-│   ├── cnn_model.py
-│   ├── keypoints_face_model.py
-│   └── keypoints_pose_model.py
-├── data/
-│   └── datasets_used.md
-├── evaluation/
-│   └── compare_metrics.ipynb
+NAO/
+├── apiflask/                 # Carpeta con backend Flask en Py3 (uso demodelo y API)
+├── data/                     # Datasets originales o preprocesados
+│   ├── fer2013/              # csv, img sueltas
+│   └── test_imgs/            # Para pruebas en notebooks
+├── models/                   # Modelos guardados (.pt, .h5, etc.)
+│   ├── modelo_emocion.h5
+│   ├── cnn/  
+│   ├── keypoints_f/
+│   └── keypoints_p/
+├── notebooks/                # Experimentos y pruebas manuales
+│   ├── logs/
+│   └── 001_test_model1.ipynb ...
+├── scripts/                  # Código fuente general
+│   ├── train/                # Entrenamiento de modelos
+│   │   ├── train_cnn.py
+│   │   ├── train_keypoints_f.py
+│   │   └── train_keypoints_p.py
+│   ├── models/               # Definición de arquitecturas
+│   │   ├── cnn.py
+│   │   └── classifiers.py    # MLP / SVM para keypoints
+│   ├── extractors/           # Extracción de features
+│   │   ├── face_keypoints.py
+│   │   └── pose_keypoints.py
+│   ├── evaluate.py           # Evaluación y comparación
+│   ├── preprocess.py         # Resize, grayscale, crop, etc.
+│   └── utils.py              # Métricas, visualización, timers
 ├── main.py                 # Script que corre en NAO (Py2.7)
-├── run.sh                 # Script de ejecución     
-├── apiflask/              # Carpeta con backend Flask en Py3 (uso demodelo y API)
-├── readme.md      
-        
+├── run.sh                    # Script de ejecución rápida
+├── requirements_backend.txt
+├── requirements_nao.txt
+├── pynaoqi-python2.7-2.8.6.23-linux64-20191127_152327/
+└── README.md       
 ```
 
 ## ⚙️ Requisitos
 
-TODO: add requirements 2.7 y 3.10
+TODO: test requirements 2.7 y 3.10
 
 
 ## ▶️ Uso
@@ -95,3 +115,12 @@ Este proyecto se enmarca como investigación aplicada de carácter comparativo, 
 ## 📊 Resultados comparativos (TBD)
 
 Se incluirán tablas comparativas de rendimiento por técnica y escenario. Las pruebas abarcan desde entornos controlados hasta validaciones ecológicas con niños en el FabLab.
+
+
+| Técnica | Tipo de modelo | Dataset base | Tamaño imagen / input | Tiempo estimado entrenamiento | Precisión esperada (aprox.) | Robustez en condiciones reales | Velocidad de inferencia |
+| :---- | :---- | :---- | :---- | :---- | :---- | :---- | :---- |
+| CNN (MobileNetV2) | Preentrenado \+ Fine-tuning | FER2013 | 224×224 | 5–12 min | 75–85% | Media | Rápida |
+| CNN (VGG19) | Preentrenado \+ Fine-tuning | FER2013 | 224×224 | 12–20 min | 78–88% | Baja–Media | Lenta |
+| CNN propia | Desde cero | FER2013 | 48×48 | 3–8 min | 65–75% | Baja | Muy rápida |
+| Keypoints faciales | MLP / SVM | FER2013 (keypoints extraídos) | 468 puntos (x,y) | \<1 min | 65–80% | Alta | Muy rápida |
+| Keypoints posturales | MLP / SVM | FER2013 / videos propios | \~33 puntos (x,y) | \<1 min | 55–70% | Media–Alta | Muy rápida |

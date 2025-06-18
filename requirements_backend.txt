@@ -1,0 +1,9 @@
+# Python 3.10
+flask
+numpy
+opencv-python
+pillow
+mediapipe
+scikit-learn
+torch
+torchvision
