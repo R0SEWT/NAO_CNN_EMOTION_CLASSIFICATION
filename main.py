@@ -1,22 +1,25 @@
-# main.py (Python 2.7)
+# -*- coding: utf-8 -*-
 
 from naoqi import ALProxy
-import urllib2
-import time
-import base64
-import json
-import vision_definitions
+import urllib2, time, base64, json, vision_definitions, io
 from PIL import Image
 import StringIO
-
-API_EMOCION = "http://172.25.88.231:5000/emocion"
-NAO_IP = "192.168.108.90"
-PORT = 9559
+# ──────────────────────────────────────────────────────────────
+# Configuración
+# ──────────────────────────────────────────────────────────────
+API_EMOCION = "http://192.168.18.5:5000/emocion"
+#NAO_IP = "192.168.108.90"
+NAO_IP = "127.0.0.1"
+#PORT = 9559
 #PUERTO = 49940
+PORT = 54923
 
+TESTING_ON_PC = True   # ← cambia a False para usar la cámara del NAO
+PC_CAM_INDEX  = 2       # Índice de tu webcam en Windows/Linux
 
-
-
+# ──────────────────────────────────────────────────────────────
+# Proxies NAO (solo se necesitan para audio/movimientos)
+# ──────────────────────────────────────────────────────────────
 tts = ALProxy("ALTextToSpeech", NAO_IP, PORT)
 motion = ALProxy("ALMotion", NAO_IP, PORT)
 camProxy = ALProxy("ALVideoDevice", NAO_IP, PORT)
@@ -24,10 +27,13 @@ camProxy = ALProxy("ALVideoDevice", NAO_IP, PORT)
 # motion.stiffnessInterpolation("Body", 0.0, 0.0)
 # motion.stiffnessInterpolation("Body", 1.0, 1.0)
 
-def capturar_imagen():
-    resolution = vision_definitions.kVGA
-    colorSpace = vision_definitions.kRGBColorSpace
-    fps = 10
+# ────────────────────────────
+# Cámara del NAO
+# ────────────────────────────
+def capturar_imagen_nao():
+    resolution  = vision_definitions.kVGA
+    colorSpace  = vision_definitions.kRGBColorSpace
+    fps         = 10
     client_name = "nao_emotion_client"
 
     videoClient = camProxy.subscribeCamera(client_name, 0, resolution, colorSpace, fps)
@@ -45,6 +51,19 @@ def capturar_imagen():
     img.save(buffer, format="JPEG")
     return base64.b64encode(buffer.getvalue())
 
+# ───────────────────────────────────────────
+# Cámara del PC – OpenCV con preview a/s
+# ───────────────────────────────────────────
+def capturar_imagen_pc(*_):
+    try:
+        return urllib2.urlopen("http://127.0.0.1:8000/snapshot", timeout=3).read()
+    except Exception as e:
+        print("[PC] No pudo obtener snapshot:", e)
+        return None
+
+# ────────────────────────────
+# API Flask
+# ────────────────────────────
 def enviar_imagen_y_recibir_emocion(encoded_img):
     req = urllib2.Request(API_EMOCION)
     req.add_header('Content-Type', 'application/json')
@@ -56,6 +75,7 @@ def enviar_imagen_y_recibir_emocion(encoded_img):
         print("Error al enviar imagen:", e)
         return "no_face"
     
+
 def volver_a_base():
     names = ["HeadYaw", "HeadPitch", "RShoulderPitch", "RElbowRoll", "RWristYaw",
              "LShoulderPitch", "LElbowRoll", "LWristYaw"]
@@ -174,7 +194,13 @@ if __name__ == "__main__":
     motion.angleInterpolation("HeadPitch", 0.1, 0.4, True)
     escena()
     time.sleep(0.5)
-    img_base64 = capturar_imagen()
+
+    # Elegir fuente de imagen según bandera
+    if TESTING_ON_PC:
+        img_base64 = capturar_imagen_pc(PC_CAM_INDEX)
+    else:
+        img_base64 = capturar_imagen_nao()
+
     if img_base64:
         emocion = enviar_imagen_y_recibir_emocion(img_base64)
     else:
@@ -182,4 +208,4 @@ if __name__ == "__main__":
 
     print("Emocion detectada:", emocion)
     reaccionar(emocion)
-    #motion.rest()
+    # motion.rest()
