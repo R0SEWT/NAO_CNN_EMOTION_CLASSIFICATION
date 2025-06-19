@@ -7,6 +7,8 @@ from scripts.models.cnn import get_mobilenet_model, get_vgg19_model, CustomCNN
 import time
 import argparse
 
+from logger_train import TrainingLogger
+
 
 def train(model, dataloader, criterion, optimizer, device):
     model.train()
@@ -19,6 +21,9 @@ def train(model, dataloader, criterion, optimizer, device):
         loss.backward()
         optimizer.step()
         running_loss += loss.item() * inputs.size(0)
+
+        # TODO: anadir train acc
+
     return running_loss / len(dataloader.dataset)
 
 def evaluate(model, dataloader, criterion, device):
@@ -37,6 +42,10 @@ def evaluate(model, dataloader, criterion, device):
     return running_loss / len(dataloader.dataset), acc.item()
 
 def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001):
+
+    logger = TrainingLogger(model_name=model_name)  # dispositivo, tiempo
+
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     transform = transforms.Compose([
@@ -61,14 +70,20 @@ def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001):
     model.to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
-
     for epoch in range(epochs):
+        
         start = time.time()
         train_loss = train(model, train_loader, criterion, optimizer, device)
         val_loss, val_acc = evaluate(model, val_loader, criterion, device)
-        print(f"Epoch {epoch+1}/{epochs} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f} | Time: {time.time() - start:.2f}s")
+
+        # add train acc
+        duration = time.time() - start
+        logger.log_epoch(epoch, epochs, train_loss, val_loss, val_acc, start, duration)
+        print(f"Epoch {epoch+1}/{epochs} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f} | Time: {duration:.2f}s")
 
     torch.save(model.state_dict(), f'./models/{model_name}_final.pt')
+    logger.log_message("Entrenamiento completo. Guardando modelo final...")
+    logger.close()
 
 
 if __name__ == '__main__':
@@ -79,5 +94,6 @@ if __name__ == '__main__':
     parser.add_argument('--lr', type=float, default=0.001)
     args = parser.parse_args()
     main(args.model, args.batch_size, args.epochs, args.lr)
+
 
 #use python train_cnn.py --model mobilenet --epochs 15

@@ -1,3 +1,6 @@
+# Syncthing
+.stfolder/
+
 # ▒▒▒ Python ▒▒▒
 __pycache__/
 *.pyc
@@ -42,6 +45,7 @@ data/kers2013/
 
 # ▒▒▒ Otros ▒▒▒
 modelo_emocion.h5
+models/*.pt
 
 */tasks.md
 
