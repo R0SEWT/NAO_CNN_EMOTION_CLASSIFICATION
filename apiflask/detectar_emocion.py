@@ -45,5 +45,5 @@ def detectar_emocion(camera_index=0):
     return detectar_emocion_desde_array(frame)
 
 if __name__ == "__main__":
-    emocion = detectar_emocion()
+    emocion = detectar_emocion(2)
     print("Emoción detectada:", emocion)

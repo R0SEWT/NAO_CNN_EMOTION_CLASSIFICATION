@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Flask, request
 import base64
 import numpy as np
