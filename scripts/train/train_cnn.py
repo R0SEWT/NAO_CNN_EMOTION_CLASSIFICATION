@@ -7,7 +7,11 @@ from scripts.models.cnn import get_mobilenet_model, get_vgg19_model, CustomCNN
 import time
 import argparse
 
-from logger_train import TrainingLogger
+from scripts.logger_train import TrainingLogger
+
+import sys
+import os
+from pathlib import Path
 
 
 def train(model, dataloader, criterion, optimizer, device):
@@ -41,7 +45,7 @@ def evaluate(model, dataloader, criterion, device):
     acc = correct.double() / len(dataloader.dataset)
     return running_loss / len(dataloader.dataset), acc.item()
 
-def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001):
+def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001, data_path="./data/kers2013_sample_500_val20/"):
 
     logger = TrainingLogger(model_name=model_name)  # dispositivo, tiempo
 
@@ -55,8 +59,12 @@ def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001):
         transforms.Normalize((0.5,), (0.5,)) if model_name == 'custom' else transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
 
-    train_dataset = datasets.ImageFolder('./data/kers2013/train', transform=transform)
-    val_dataset = datasets.ImageFolder('./data/kers2013/val', transform=transform)
+
+    train_path = data_path + "train"
+    val_path = data_path + "val"
+
+    train_dataset = datasets.ImageFolder(train_path, transform=transform)
+    val_dataset = datasets.ImageFolder(val_path, transform=transform)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
@@ -81,19 +89,26 @@ def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001):
         logger.log_epoch(epoch, epochs, train_loss, val_loss, val_acc, start, duration)
         print(f"Epoch {epoch+1}/{epochs} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f} | Time: {duration:.2f}s")
 
-    torch.save(model.state_dict(), f'./models/{model_name}_final.pt')
+    save_path =data_path+"../models/"
+    if not os.path.isdir(save_path):
+        os.mkdir(save_path)
+
+    torch.save(model.state_dict(), f"{save_path}{model_name}_final.pt")
     logger.log_message("Entrenamiento completo. Guardando modelo final...")
     logger.close()
+    return val_acc
 
 
 if __name__ == '__main__':
+    sys.path.append(str(Path(__file__).resolve().parents[2]))  #root project
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, default='mobilenet', help='mobilenet, vgg19, custom')
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--lr', type=float, default=0.001)
+    parser.add_argument('--data', type=str, default='./data/kers2013_sample_500_val20/', help='revisa data')
     args = parser.parse_args()
-    main(args.model, args.batch_size, args.epochs, args.lr)
+    main(args.model, args.batch_size, args.epochs, args.lr, args.data)
 
 
-#use python train_cnn.py --model mobilenet --epochs 15
+#use  PYTHONPATH=. python scripts/train/train_cnn.py --model mobilenet --epochs 20

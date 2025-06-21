@@ -41,6 +41,8 @@ ml_models/data/kers2013/
 models/data/kers2013/*
 data/kers2013/*
 data/kers2013/
+data/kers2013/*
+data/*/
 
 
 # ▒▒▒ Otros ▒▒▒
