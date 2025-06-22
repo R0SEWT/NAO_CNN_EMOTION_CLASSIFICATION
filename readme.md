@@ -1,6 +1,3 @@
-![](media/image1.png){width="4.031472003499562in"
-height="2.7864588801399823in"}
-
 **Universidad Peruana de Ciencias Aplicadas**
 
 **Machine Learning**
