@@ -1,4 +1,3 @@
-
 import os
 import logging
 import csv
@@ -14,20 +13,40 @@ class TrainingLogger:
 
         self.log_path = os.path.join(self.base_dir, f"{timestamp}.log")
         self.csv_path = os.path.join(self.base_dir, f"{timestamp}.csv")
+        self.params_path = os.path.join(self.base_dir, f"{timestamp}_params.txt")
 
-        logging.basicConfig(
-            level=logging.INFO,
-            format="%(asctime)s - %(message)s",
-            handlers=[
-                logging.FileHandler(self.log_path),
-                logging.StreamHandler()
-            ]
-        )
+        # 🔧 Logger único por instancia
+        logger_name = f"{model_name}_{timestamp}"
+        self.logger = logging.getLogger(logger_name)
+        self.logger.setLevel(logging.INFO)
+        self.logger.propagate = False  # Evita duplicados
 
-        self.logger = logging.getLogger(model_name)
+        # 🧼 Limpia handlers previos si ya existen
+        if self.logger.hasHandlers():
+            self.logger.handlers.clear()
+
+        # 📝 Configura handlers manualmente
+        file_handler = logging.FileHandler(self.log_path)
+        stream_handler = logging.StreamHandler()
+
+        formatter = logging.Formatter("%(asctime)s - %(message)s")
+        file_handler.setFormatter(formatter)
+        stream_handler.setFormatter(formatter)
+
+        self.logger.addHandler(file_handler)
+        self.logger.addHandler(stream_handler)
+
+        # 🧾 CSV init
         self.csv_file = open(self.csv_path, mode='w', newline='')
         self.csv_writer = csv.writer(self.csv_file)
         self.csv_writer.writerow(["epoch", "train_loss", "val_loss", "train_acc", "val_acc"])
+
+        # 🧬 Guarda hiperparámetros si es dict
+        if isinstance(experiment, dict):
+            with open(self.params_path, 'w') as f:
+                for k, v in experiment.items():
+                    f.write(f"{k}: {v}\n")
+            self.logger.info(f"📄 Trial parameters saved to {self.params_path}")
 
         self.logger.info(f"📁 Training log created for model: {model_name}")
         self.logger.info(f"📄 Logs will be saved to {self.log_path}")

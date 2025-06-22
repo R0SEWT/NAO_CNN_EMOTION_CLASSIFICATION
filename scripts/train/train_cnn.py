@@ -45,10 +45,17 @@ def evaluate(model, dataloader, criterion, device):
     acc = correct.double() / len(dataloader.dataset)
     return running_loss / len(dataloader.dataset), acc.item()
 
-def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001, data_path="./data/kers2013_sample_500_val20/"):
+def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001, data_path="./data/kers2013_sample_500_val20/", trial = None):
 
-    logger = TrainingLogger(model_name=model_name)  # dispositivo, tiempo
-
+    params = {
+    "batch_size": batch_size,
+    "lr": lr,
+    "epochs": epochs,
+    "model": model_name,
+    "trial_number": trial.number if trial else "manual"
+    }
+    unique_id = f"{model_name}_trial{trial.number}" if trial else model_name
+    logger = TrainingLogger(model_name=unique_id, experiment=params, log_dir=data_path + "../../notebooks/logs")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -60,13 +67,13 @@ def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001, data_path="
     ])
 
 
+
     train_path = data_path + "train"
     val_path = data_path + "val"
 
-    train_dataset = datasets.ImageFolder(train_path, transform=transform)
-    val_dataset = datasets.ImageFolder(val_path, transform=transform)
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+
+    train_loader = DataLoader(datasets.ImageFolder(data_path + "train", transform=transform), batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(datasets.ImageFolder(data_path + "val", transform=transform), batch_size=batch_size, shuffle=False)
 
     if model_name == 'mobilenet':
         model = get_mobilenet_model()
@@ -78,16 +85,32 @@ def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001, data_path="
     model.to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
-    for epoch in range(epochs):
-        
-        start = time.time()
-        train_loss = train(model, train_loader, criterion, optimizer, device)
-        val_loss, val_acc = evaluate(model, val_loader, criterion, device)
 
-        # add train acc
-        duration = time.time() - start
-        logger.log_epoch(epoch, epochs, train_loss, val_loss, val_acc, start, duration)
-        print(f"Epoch {epoch+1}/{epochs} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f} | Time: {duration:.2f}s")
+
+    val_accuracies = []
+
+    try:
+        for epoch in range(epochs):
+            
+            start = time.time()
+            train_loss = train(model, train_loader, criterion, optimizer, device)
+            val_loss, val_acc = evaluate(model, val_loader, criterion, device)
+
+            # add train acc
+            duration = time.time() - start
+            logger.log_epoch(epoch, epochs, train_loss, val_loss, val_acc, start, duration)
+            print(f"Epoch {epoch+1}/{epochs} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f} | Time: {duration:.2f}s")
+
+            # 🔁 Reporte y pruning
+
+        if trial is not None:
+            trial.report(val_acc, step=epoch)
+            if trial.should_prune():
+                logger.log_message("Trial podado.")
+                raise optuna.exceptions.TrialPruned()  
+            val_accuracies.append(val_acc)
+    finally:
+        logger.close()
 
     save_path =data_path+"../models/"
     if not os.path.isdir(save_path):
@@ -96,7 +119,10 @@ def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001, data_path="
     torch.save(model.state_dict(), f"{save_path}{model_name}_final.pt")
     logger.log_message("Entrenamiento completo. Guardando modelo final...")
     logger.close()
-    return val_acc
+    return {
+        "val_accuracy": val_accuracies,
+        "model": model  
+    }
 
 
 if __name__ == '__main__':

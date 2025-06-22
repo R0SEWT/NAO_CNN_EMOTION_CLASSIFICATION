@@ -27,7 +27,7 @@ Este documento describe los datasets utilizados en el proyecto *Comparative Emot
 
 ---
 
-## 3. Capturas propias (keypoints posturales) (TODO)
+## 3. Capturas propias (keypoints posturales) (TODO) 
 
 - **Fuente**: capturas en tiempo real con webcam (autograbación o expresiones actuadas).
 - **Contenido**: expresiones corporales simuladas de emociones básicas.
