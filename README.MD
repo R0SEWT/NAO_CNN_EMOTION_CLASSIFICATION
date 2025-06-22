@@ -1,14 +1,4 @@
-﻿![](Aspose.Words.1106e62c-c961-4b70-871f-f803cac18441.001.png)
-
-
-
-
-
-
-
-
-
-**Universidad Peruana de Ciencias Aplicadas**
+﻿**Universidad Peruana de Ciencias Aplicadas**
 
 **Machine Learning**
 
@@ -20,16 +10,12 @@
 
 **Integrantes:**
 
-
 - Jose Alejandro Loyola Huamán - U202110078
 - Willam Alexander Huamán Saavedra  - U20211E088
 - Rody Sebastián Vílchez Marín - u202216562
 - Luis Enrique Zegarra García - U202123273
 
-2025
-
-
-1. **INTRODUCCIÓN**
+**INTRODUCCIÓN**
 
    En los últimos años, la inteligencia artificial ha revolucionado diversos campos de aplicación, incluyendo la robótica social y la educación personalizada. Una de las áreas con mayor impacto es la detección de emociones mediante visión por computadora, especialmente en contextos donde la interacción humano-robot puede tener un valor terapéutico o pedagógico.
 
@@ -39,7 +25,7 @@
 
    Esta implementación representa un ejemplo claro de cómo la inteligencia artificial puede integrarse de forma práctica en un entorno robótico real, cumpliendo el objetivo académico de demostrar que un agente inteligente puede ejecutar acciones condicionadas a los resultados de un modelo de IA.
 
-1. **OBJETIVO**
+**OBJETIVO**
    #### <a name="_wt7hn0wk2pv3"></a>**Objetivo general**
    Desarrollar e integrar un sistema de inteligencia artificial capaz de detectar emociones faciales a partir de imágenes capturadas por el robot NAO, y condicionar su comportamiento expresivo (voz y gestos) en función del resultado obtenido, con el fin de explorar su aplicabilidad como herramienta de apoyo psicoeducativo para niños con Trastorno del Espectro Autista (TEA).
    #### <a name="_gyilsrazog5k"></a>**Objetivos específicos**
@@ -48,7 +34,7 @@
 - Validar experimentalmente el sistema en interacciones reales con niños dentro del FabLab de la universidad, observando la naturalidad de la respuesta del robot y la reacción de los usuarios.
 - Documentar el proceso de integración y configuración del modelo en el entorno operativo del robot NAO, asegurando su portabilidad y replicabilidad.**\
 
-1. **DIAGRAMA DE ARQUITECTURA DE COMPONENTES DE LA IMPLEMENTACIÓN** 
+**DIAGRAMA DE ARQUITECTURA DE COMPONENTES DE LA IMPLEMENTACIÓN** 
 
    El sistema desarrollado se basa en una arquitectura modular que conecta al robot humanoide NAO con una API de inteligencia artificial encargada de la detección de emociones, integrando componentes de captura, procesamiento, predicción y validación. A continuación, se describe el flujo general del sistema según el rol de cada integrante:
 
@@ -91,7 +77,7 @@ Una vez detectada la emoción, esta es enviada de vuelta al robot NAO. Según la
 
 Finalmente, todos los avances fueron registrados en informes técnicos y organizados en versiones controladas del código. Alejandro también coordinó la integración de módulos y documentación para facilitar futuras extensiones del sistema.
 
-1. ` `**INSTRUCCIONES DE INSTALACIÓN DEL MODELO DE IA EN EL ROBOT NAO**
+**INSTRUCCIONES DE INSTALACIÓN DEL MODELO DE IA EN EL ROBOT NAO**
 
    **Enlace del Git Hub donde se encuentra todas las instrucciones, en la rama dev se ha hecho el merge** 
 
@@ -100,10 +86,3 @@ Finalmente, todos los avances fueron registrados en informes técnicos y organiz
    **Enlace de la carpeta donde se ubica el video:**
 
    <https://drive.google.com/drive/folders/1DG2ZNvtWSc58up8ZPChyiAcdMsj9ewC_?usp=sharing>
-
-
-
-
-
-
-
