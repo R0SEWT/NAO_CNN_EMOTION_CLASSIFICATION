@@ -7,6 +7,12 @@ from scripts.models.cnn import get_mobilenet_model, get_vgg19_model, CustomCNN
 import time
 import argparse
 
+from scripts.logger_train import TrainingLogger
+
+import sys
+import os
+from pathlib import Path
+
 
 def train(model, dataloader, criterion, optimizer, device):
     model.train()
@@ -19,6 +25,9 @@ def train(model, dataloader, criterion, optimizer, device):
         loss.backward()
         optimizer.step()
         running_loss += loss.item() * inputs.size(0)
+
+        # TODO: anadir train acc
+
     return running_loss / len(dataloader.dataset)
 
 def evaluate(model, dataloader, criterion, device):
@@ -36,7 +45,18 @@ def evaluate(model, dataloader, criterion, device):
     acc = correct.double() / len(dataloader.dataset)
     return running_loss / len(dataloader.dataset), acc.item()
 
-def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001):
+def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001, data_path="./data/kers2013_sample_500_val20/", trial = None):
+
+    params = {
+    "batch_size": batch_size,
+    "lr": lr,
+    "epochs": epochs,
+    "model": model_name,
+    "trial_number": trial.number if trial else "manual"
+    }
+    unique_id = f"{model_name}_trial{trial.number}" if trial else model_name
+    logger = TrainingLogger(model_name=unique_id, experiment=params, log_dir=data_path + "../../notebooks/logs")
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     transform = transforms.Compose([
@@ -46,10 +66,14 @@ def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001):
         transforms.Normalize((0.5,), (0.5,)) if model_name == 'custom' else transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
 
-    train_dataset = datasets.ImageFolder('./data/kers2013/train', transform=transform)
-    val_dataset = datasets.ImageFolder('./data/kers2013/val', transform=transform)
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+
+
+    train_path = data_path + "train"
+    val_path = data_path + "val"
+
+
+    train_loader = DataLoader(datasets.ImageFolder(data_path + "train", transform=transform), batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(datasets.ImageFolder(data_path + "val", transform=transform), batch_size=batch_size, shuffle=False)
 
     if model_name == 'mobilenet':
         model = get_mobilenet_model()
@@ -62,22 +86,55 @@ def main(model_name='mobilenet', batch_size=32, epochs=10, lr=0.001):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
 
-    for epoch in range(epochs):
-        start = time.time()
-        train_loss = train(model, train_loader, criterion, optimizer, device)
-        val_loss, val_acc = evaluate(model, val_loader, criterion, device)
-        print(f"Epoch {epoch+1}/{epochs} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f} | Time: {time.time() - start:.2f}s")
 
-    torch.save(model.state_dict(), f'./models/{model_name}_final.pt')
+    val_accuracies = []
+
+    try:
+        for epoch in range(epochs):
+            
+            start = time.time()
+            train_loss = train(model, train_loader, criterion, optimizer, device)
+            val_loss, val_acc = evaluate(model, val_loader, criterion, device)
+
+            # add train acc
+            duration = time.time() - start
+            logger.log_epoch(epoch, epochs, train_loss, val_loss, val_acc, start, duration)
+            print(f"Epoch {epoch+1}/{epochs} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f} | Time: {duration:.2f}s")
+
+            # 🔁 Reporte y pruning
+
+        if trial is not None:
+            trial.report(val_acc, step=epoch)
+            if trial.should_prune():
+                logger.log_message("Trial podado.")
+                raise optuna.exceptions.TrialPruned()  
+            val_accuracies.append(val_acc)
+    finally:
+        logger.close()
+
+    save_path =data_path+"../models/"
+    if not os.path.isdir(save_path):
+        os.mkdir(save_path)
+
+    torch.save(model.state_dict(), f"{save_path}{model_name}_final.pt")
+    logger.log_message("Entrenamiento completo. Guardando modelo final...")
+    logger.close()
+    return {
+        "val_accuracy": val_accuracies,
+        "model": model  
+    }
 
 
 if __name__ == '__main__':
+    sys.path.append(str(Path(__file__).resolve().parents[2]))  #root project
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, default='mobilenet', help='mobilenet, vgg19, custom')
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--lr', type=float, default=0.001)
+    parser.add_argument('--data', type=str, default='./data/kers2013_sample_500_val20/', help='revisa data')
     args = parser.parse_args()
-    main(args.model, args.batch_size, args.epochs, args.lr)
+    main(args.model, args.batch_size, args.epochs, args.lr, args.data)
 
-#use python train_cnn.py --model mobilenet --epochs 15
+
+#use  PYTHONPATH=. python scripts/train/train_cnn.py --model mobilenet --epochs 20
