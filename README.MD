@@ -1,88 +1,162 @@
-﻿**Universidad Peruana de Ciencias Aplicadas**
+﻿# NAO_FER_CNN
 
-**Machine Learning**
+## Introduccion
 
-**Ciclo:** 2025-1
+Este proyecto implementa un sistema de detección de emociones con visión por computadora para el robot NAO, enfocado en apoyar a niños con autismo (TEA). Usa CNNs integradas vía Flask para que NAO responda con gestos y voz según la emoción detectada. El sistema se validará en pruebas reales en el FabLab, demostrando una aplicación práctica de IA en robótica social con fines psicoeducativos.
 
-**Docente:** Jairo Pinedo Taquia
+**Objetivo general:**
+Crear un sistema de IA que detecte emociones faciales desde la cámara del NAO y adapte su voz y gestos según el resultado, para apoyar a niños con TEA.
 
-**Practica Calificada 3**
+**Objetivos específicos:**
 
-**Integrantes:**
+* Comparar arquitecturas e implementaciones de CNNs y elegir el más eficiente para integrarlo con NAO vía Flask.
+* Validar el sistema con niños en el FabLab, observando respuestas naturales.
+* Documentar todo el proceso para que sea replicable en otros entornos.
 
-- Jose Alejandro Loyola Huamán - U202110078
-- Willam Alexander Huamán Saavedra  - U20211E088
-- Rody Sebastián Vílchez Marín - u202216562
-- Luis Enrique Zegarra García - U202123273
+## Desarrollo
 
-**INTRODUCCIÓN**
+El sistema conecta al robot NAO con una API Flask que detecta emociones faciales y le indica cómo responder. La arquitectura tiene cuatro componentes principales:
 
-   En los últimos años, la inteligencia artificial ha revolucionado diversos campos de aplicación, incluyendo la robótica social y la educación personalizada. Una de las áreas con mayor impacto es la detección de emociones mediante visión por computadora, especialmente en contextos donde la interacción humano-robot puede tener un valor terapéutico o pedagógico.
+1. API Flask (Luis):
+NAO captura la imagen del usuario y la expone a un servidor Flask externo con mayor capacidad de cómputo. Este servidor procesa la imagen, ejecuta el modelo de clasificación emocional y devuelve la predicción. Luego, NAO interpreta esta respuesta para ejecutar gestos y frases acordes al estado emocional detectado.
 
-   El presente proyecto, titulado “NAO Emotion Detection System”, tiene como propósito implementar un sistema de reconocimiento emocional basado en aprendizaje automático que permita al robot humanoide NAO reaccionar con gestos y respuestas verbales en función de la emoción detectada en el rostro de un usuario. Este sistema está orientado a brindar apoyo psicoeducativo a niños con Trastorno del Espectro Autista (TEA), aprovechando las capacidades expresivas del robot para facilitar interacciones sociales empáticas y no invasivas.
+2. Modelos de IA (Rody):
+   Se entrenaron modelos segun las arquitecturas MobileNetV2, VGG19 y un CNN Custom (enfocado en velocidad de inferencia). Se implemento una busqueda de hiperparmetros mediante `optuna` para optimizar la precision de los modelos. Finalmente se selecciono el modelo `MobileNetV2, con un  batch_size: 64, tasa de aprendizaje: 0.2647x10-3, epochs: 10 que obtuvo una presion de 65,91%. Para la prediccion multivariada de las 7 categorias emocionales del FER2013 (35.000 obs).
 
-   El desarrollo del sistema se basa en el uso de modelos de redes neuronales convolucionales (CNN), integrados a través de una API Flask que actúa como intermediaria entre el modelo de IA (ejecutado en una laptop) y el robot NAO (que opera con Python 2.7). Se considera, además, la validación del sistema en condiciones reales dentro del FabLab de la universidad, lo que permite evaluar tanto el rendimiento técnico como la utilidad pedagógica de la solución.
+   Se implemento el servidor de Flask Host donde se recibe la imagen y se preprocesa con un modelo prentenado para la deteccion de rostros, usado para realizar la prediccion entregando la etiqueta mas probable al cliente Flask que establece la comunicacion con NAO.
 
-   Esta implementación representa un ejemplo claro de cómo la inteligencia artificial puede integrarse de forma práctica en un entorno robótico real, cumpliendo el objetivo académico de demostrar que un agente inteligente puede ejecutar acciones condicionadas a los resultados de un modelo de IA.
+3. Validación con usuarios (Willian):
+   Se probo en el FabLab
 
-**OBJETIVO**
-   #### <a name="_wt7hn0wk2pv3"></a>**Objetivo general**
-   Desarrollar e integrar un sistema de inteligencia artificial capaz de detectar emociones faciales a partir de imágenes capturadas por el robot NAO, y condicionar su comportamiento expresivo (voz y gestos) en función del resultado obtenido, con el fin de explorar su aplicabilidad como herramienta de apoyo psicoeducativo para niños con Trastorno del Espectro Autista (TEA).
-   #### <a name="_gyilsrazog5k"></a>**Objetivos específicos**
-- Evaluar y comparar distintos enfoques de reconocimiento emocional, incluyendo modelos basados en CNNs y clasificadores de keypoints faciales y posturales, bajo condiciones controladas.\
-  Implementar la técnica con mejor desempeño (precisión, velocidad y robustez) en un sistema distribuido entre el robot NAO y un backend Flask externo.
-- Validar experimentalmente el sistema en interacciones reales con niños dentro del FabLab de la universidad, observando la naturalidad de la respuesta del robot y la reacción de los usuarios.
-- Documentar el proceso de integración y configuración del modelo en el entorno operativo del robot NAO, asegurando su portabilidad y replicabilidad.**\
+4. Documentación y coordinación (Alejandro):
+   Se documentó todo el proceso 
 
-**DIAGRAMA DE ARQUITECTURA DE COMPONENTES DE LA IMPLEMENTACIÓN** 
+## Flujo del sistema
 
-   El sistema desarrollado se basa en una arquitectura modular que conecta al robot humanoide NAO con una API de inteligencia artificial encargada de la detección de emociones, integrando componentes de captura, procesamiento, predicción y validación. A continuación, se describe el flujo general del sistema según el rol de cada integrante:
+El flujo del sistema es:
 
-   ![](Aspose.Words.1106e62c-c961-4b70-871f-f803cac18441.002.png)
+1. El NAO captura una imagen desde su cámara frontal.
+2. La imagen se codifica en base64 y se envía vía HTTP a una API Flask.
+3. Un modelo de ML en la laptop analiza la emoción facial en la imagen.
+4. La respuesta emocional se devuelve al NAO, que reacciona con voz y gestos expresivos.
 
-   **Enlace del diagrama** 
 
-   [**https://miro.com/welcomeonboard/TThFWUh4b1c0MG5pZXQrK3dJMWMzNGp1dkxFcEFoQnRMQWVxekVnMTBadGtvWHVmZnFPQnFEQkZYREJiWEVTMW5nNHNwU1laQ1hyWWJUMXI4V0cweEtkV1AyK1NZY3JSNXRCd2pmaHNmditRSHVFSWJXeXFtSjM5NDh0QkxTTW93VHhHVHd5UWtSM1BidUtUYmxycDRnPT0hdjE=?share_link_id=167565500588](https://miro.com/welcomeonboard/TThFWUh4b1c0MG5pZXQrK3dJMWMzNGp1dkxFcEFoQnRMQWVxekVnMTBadGtvWHVmZnFPQnFEQkZYREJiWEVTMW5nNHNwU1laQ1hyWWJUMXI4V0cweEtkV1AyK1NZY3JSNXRCd2pmaHNmditRSHVFSWJXeXFtSjM5NDh0QkxTTW93VHhHVHd5UWtSM1BidUtUYmxycDRnPT0hdjE=?share_link_id=167565500588)** 
+## Tecnologías utilizadas
 
-   **Explicación**
+- **Robot**: NAO (versión con Python 2.7)
+- **API backend**: Flask (Python 3.10)
+- **Modelos**:
+  - CNN (MobileNetV2 / VGG19)
+  - Keypoints faciales (MediaPipe + MLP)
+  - Keypoints posturales (MediaPipe Pose + MLP)
+- **Librerías**:
+  - `pynaoqi`
+  - `Flask`, `NumPy`, `OpenCV`, `Pillow`
+  - `MediaPipe`, `scikit-learn`, `PyTorch`
+- **Comunicación**: HTTP simple (sin sockets ni ROS)
 
-   **API Flask – Procesamiento de Imagen**
+## Estructura del repositorio
 
-   Responsable: Luis – Técnico principal
+```
+NAO/
+├── apiflask/                 # Carpeta con backend Flask en Py3 (uso demodelo y API)
+├── data/                     # Datasets originales o preprocesados
+│   ├── fer2013/              # csv, img sueltas
+│   └── test_imgs/            # Para pruebas en notebooks
+├── models/                   # Modelos guardados (.pt, .h5, etc.)
+│   ├── modelo_emocion.h5
+│   ├── cnn/  
+│   ├── keypoints_f/
+│   └── keypoints_p/
+├── notebooks/                # Experimentos y pruebas manuales
+│   ├── logs/
+│   └── 001_test_model1.ipynb ...
+├── scripts/                  # Código fuente general
+│   ├── train/                # Entrenamiento de modelos
+│   │   ├── train_cnn.py
+│   │   ├── train_keypoints_f.py
+│   │   └── train_keypoints_p.py
+│   ├── models/               # Definición de arquitecturas
+│   │   ├── cnn.py
+│   │   └── classifiers.py    # MLP / SVM para keypoints
+│   ├── extractors/           # Extracción de features
+│   │   ├── face_keypoints.py
+│   │   └── pose_keypoints.py
+│   ├── evaluate.py           # Evaluación y comparación
+│   ├── preprocess.py         # Resize, grayscale, crop, etc.
+│   └── utils.py              # Métricas, visualización, timers
+├── main.py                 # Script que corre en NAO (Py2.7)
+├── run.sh                    # Script de ejecución rápida
+├── requirements_backend.txt
+├── requirements_nao.txt
+├── pynaoqi-python2.7-2.8.6.23-linux64-20191127_152327/
+└── README.md       
+```
 
-   La API, implementada con Flask, cumple los siguientes pasos:
+## 🛠️ Instalación
 
-- Recibe la imagen codificada desde NAO.
-- Decodifica la imagen base64 y la convierte en un arreglo NumPy.
-- Preprocesa la imagen (escala de grises, redimensionamiento, normalización).
-- Llama al modelo .h5 entrenado previamente (CNN propia).
-- Obtiene la emoción predicha y la devuelve como respuesta en formato texto (por ejemplo, "happy", "angry", etc.).
+### Requisitos
 
-### <a name="_tmzqvru4aa25"></a>**Modelos de IA – Clasificación de Emociones**
-**Responsable:** Rody – Modelos y datos
+* Tener instalado [Conda](https://docs.conda.io/en/latest/miniconda.html)
+* Clonar el repositorio y acceder a la carpeta del proyecto
 
-Durante el proceso de experimentación, se entrenaron y compararon múltiples enfoques de detección emocional:
+```bash
+git clone https://github.com/R0SEWT/NAO_CNN_EMOTION_CLASSIFICATION.git
+cd NAO_CNN_EMOTION_CLASSIFICATION
+```
 
-- **CNNs preentrenadas:** MobileNetV2 y VGG19.
-- **CNN propia:** diseñada con tres capas convolucionales y capas densas.
-- **Modelos alternativos:** Keypoints faciales y posturales extraídos con OpenCV/MediaPipe.
+### Instalación rápida con script
 
-Cada uno fue evaluado en términos de **precisión**, **tiempo de respuesta** y **robustez**, y finalmente se eligió la **CNN propia**, la cual fue exportada en formato .h5 y desplegada en producción a través de la API Flask.
-### <a name="_jx3yjzelkkx"></a>**Interacción y Validación con Usuarios**
-**Responsable:** Willian – Interacción y validación
+Ejecuta el script `setup.sh` para crear automáticamente los entornos y dejar todo listo:
 
-Una vez detectada la emoción, esta es enviada de vuelta al robot NAO. Según la emoción recibida, el robot ejecuta una respuesta expresiva (como gestos, frases o movimientos corporales). Estas reacciones fueron validadas en una sesión práctica con niños, permitiendo observar la naturalidad de la interacción y evaluar la eficacia del sistema.
-### <a name="_1uaf05t4g2mp"></a>**Documentación y Coordinación**
-**Responsable:** Alejandro – Documentación y organización
+```bash
+chmod +x setup.sh
+./setup.sh
+```
 
-Finalmente, todos los avances fueron registrados en informes técnicos y organizados en versiones controladas del código. Alejandro también coordinó la integración de módulos y documentación para facilitar futuras extensiones del sistema.
+Esto crea:
 
-**INSTRUCCIONES DE INSTALACIÓN DEL MODELO DE IA EN EL ROBOT NAO**
+* `nao_py27`: entorno con Python 2.7 y dependencias del NAO
+* `nao_sv`: entorno principal con dependencias de la API Flask
 
-   **Enlace del Git Hub donde se encuentra todas las instrucciones, en la rama dev se ha hecho el merge** 
+---
 
-   <https://github.com/R0SEWT/NAO_CNN_EMOTION_CLASSIFICATION> 
+## ▶️ Uso
 
-   **Enlace de la carpeta donde se ubica el video:**
+1. Activar el entorno:
 
-   <https://drive.google.com/drive/folders/1DG2ZNvtWSc58up8ZPChyiAcdMsj9ewC_?usp=sharing>
+```bash
+conda activate nao_sv
+```
+
+2. Ejecutar la API Flask en la laptop:
+
+```bash
+python api_emocion.py
+```
+
+3. Ejecutar el script en el NAO (verifica que la IP esté configurada):
+
+```bash
+./run.sh
+```
+
+---
+
+
+## 🧪 Pruebas
+
+Se realizaron pruebas de usabilidad en el fablab logrando predecir la emocion en los rostros de los participantes
+
+## 📚 Enfoque académico
+
+Se busca explorar cómo los sistemas de detección emocional pueden integrarse en contextos de robótica social como herramientas de soporte para niños con TEA, siguiendo enfoques vicarios.
+
+Este proyecto se enmarca como investigación aplicada de carácter comparativo, contribuyendo al análisis de técnicas de visión por computadora para contextos sociales asistidos. Se integra una validación práctica con niños autistas en el FabLab de la universidad, aportando evidencia preliminar sobre la viabilidad técnica y pedagógica del enfoque.
+
+
+* Código e instrucciones: [GitHub - Rama `dev`](https://github.com/R0SEWT/NAO_CNN_EMOTION_CLASSIFICATION)
+* Video de validación: [Carpeta en Drive](https://drive.google.com/drive/folders/1DG2ZNvtWSc58up8ZPChyiAcdMsj9ewC_?usp=sharing)
+
+**Diagrama del sistema:**
+[Ver en Miro](https://miro.com/welcomeonboard/TThFWUh4b1c0MG5pZXQrK3dJMWMzNGp1dkxFcEFoQnRMQWVxekVnMTBadGtvWHVmZnFPQnFEQkZYREJiWEVTMW5nNHNwU1laQ1hyWWJUMXI4V0cweEtkV1AyK1NZY3JSNXRCd2pmaHNmditRSHVFSWJXeXFtSjM5NDh0QkxTTW93VHhHVHd5UWtSM1BidUtUYmxycDRnPT0hdjE=?share_link_id=167565500588)
