@@ -1,0 +1,214 @@
+.
+├── apiflask
+│   ├── api_emocion.py
+│   ├── detectar_emocion.py
+│   ├── logs_img
+│   ├── utils.py
+│   └── webcam_server.py
+├── config
+│   └── config.py
+├── data
+│   ├── fer2013
+│   ├── kers2013
+│   │   ├── train
+│   │   │   ├── angry
+│   │   │   ├── disgust
+│   │   │   ├── fear
+│   │   │   ├── happy
+│   │   │   ├── neutral
+│   │   │   ├── sad
+│   │   │   └── surprise
+│   │   └── val
+│   │       ├── angry
+│   │       ├── disgust
+│   │       ├── fear
+│   │       ├── happy
+│   │       ├── neutral
+│   │       ├── sad
+│   │       └── surprise
+│   ├── kers2013_sample_500_val20
+│   │   ├── train
+│   │   │   ├── angry
+│   │   │   ├── disgust
+│   │   │   ├── fear
+│   │   │   ├── happy
+│   │   │   ├── neutral
+│   │   │   ├── sad
+│   │   │   └── surprise
+│   │   └── val
+│   │       ├── angry
+│   │       ├── disgust
+│   │       ├── fear
+│   │       ├── happy
+│   │       ├── neutral
+│   │       ├── sad
+│   │       └── surprise
+│   ├── models
+│   │   ├── custom_final.pt
+│   │   ├── mobilenet_best_trial.pt
+│   │   ├── mobilenet_final.pt
+│   │   ├── mobilenet_trial6_best.pt
+│   │   ├── vgg19_final.pt
+│   │   └── vgg19_trial0_best.pt
+│   ├── README.md
+│   └── test_imgs
+├── doc
+│   ├── arbol.txt
+│   ├── Aspose.Words.1106e62c-c961-4b70-871f-f803cac18441.001.png
+│   ├── Aspose.Words.1106e62c-c961-4b70-871f-f803cac18441.002.png
+│   ├── cnn_training_logical_flow.png
+│   ├── cnn_training_optimization_flow.png
+│   ├── flask_emotion_api_architecture.png
+│   ├── logical_nao_flow.png
+│   └── technical_nao_flow.png
+├── environment.yml
+├── logs
+│   └── train
+│       └── mobilenet
+│           ├── 20250619_150940.csv
+│           ├── 20250619_150940.log
+│           ├── 20250619_151108.csv
+│           └── 20250619_151108.log
+├── main.py
+├── models
+│   ├── mobilenet_final.pt
+│   ├── modelo_emocion.h5
+│   ├── README.md
+│   └── tasks.md
+├── notebooks
+│   ├── 001_generate_tree.ipynb
+│   ├── 101_test_model_basic.ipynb
+│   ├── 102_predict_multiple_images.ipynb
+│   ├── 103_predict_top3_emotions.ipynb
+│   ├── 104_predict_top3_with_logging.ipynb
+│   ├── 203_optuna_hyperparameter_search.ipynb
+│   ├── 204_analyze_training_logs.ipynb
+│   └── logs
+│       ├── custom_trial0
+│       │   ├── 20250621_184516.csv
+│       │   ├── 20250621_184516.log
+│       │   └── 20250621_184516_params.txt
+│       ├── custom_trial1
+│       │   ├── 20250621_184618.csv
+│       │   ├── 20250621_184618.log
+│       │   └── 20250621_184618_params.txt
+│       ├── custom_trial2
+│       │   ├── 20250621_184719.csv
+│       │   ├── 20250621_184719.log
+│       │   └── 20250621_184719_params.txt
+│       ├── custom_trial3
+│       │   ├── 20250621_184821.csv
+│       │   ├── 20250621_184821.log
+│       │   └── 20250621_184821_params.txt
+│       ├── custom_trial4
+│       │   ├── 20250621_184929.csv
+│       │   ├── 20250621_184929.log
+│       │   └── 20250621_184929_params.txt
+│       ├── custom_trial5
+│       │   ├── 20250621_185030.csv
+│       │   ├── 20250621_185030.log
+│       │   └── 20250621_185030_params.txt
+│       ├── emociones.log
+│       ├── mobilenet_trial0
+│       │   ├── 20250621_105901.csv
+│       │   ├── 20250621_105901.log
+│       │   └── 20250621_105901_params.txt
+│       ├── mobilenet_trial1
+│       │   ├── 20250621_111644.csv
+│       │   ├── 20250621_111644.log
+│       │   └── 20250621_111644_params.txt
+│       ├── mobilenet_trial2
+│       │   ├── 20250621_113317.csv
+│       │   ├── 20250621_113317.log
+│       │   └── 20250621_113317_params.txt
+│       ├── mobilenet_trial3
+│       │   ├── 20250621_115011.csv
+│       │   ├── 20250621_115011.log
+│       │   └── 20250621_115011_params.txt
+│       ├── mobilenet_trial4
+│       │   ├── 20250621_120558.csv
+│       │   ├── 20250621_120558.log
+│       │   └── 20250621_120558_params.txt
+│       ├── mobilenet_trial5
+│       │   ├── 20250621_122118.csv
+│       │   ├── 20250621_122118.log
+│       │   └── 20250621_122118_params.txt
+│       ├── mobilenet_trial6
+│       │   ├── 20250621_123807.csv
+│       │   ├── 20250621_123807.log
+│       │   └── 20250621_123807_params.txt
+│       ├── mobilenet_trial7
+│       │   ├── 20250621_125509.csv
+│       │   ├── 20250621_125509.log
+│       │   └── 20250621_125509_params.txt
+│       ├── mobilenet_trial8
+│       │   ├── 20250621_131132.csv
+│       │   ├── 20250621_131132.log
+│       │   └── 20250621_131132_params.txt
+│       ├── mobilenet_trial9
+│       │   ├── 20250621_132833.csv
+│       │   ├── 20250621_132833.log
+│       │   └── 20250621_132833_params.txt
+│       ├── predicciones_emociones.csv
+│       ├── vgg19_trial0
+│       │   ├── 20250621_134400.csv
+│       │   ├── 20250621_134400.log
+│       │   └── 20250621_134400_params.txt
+│       ├── vgg19_trial1
+│       │   ├── 20250621_145606.csv
+│       │   ├── 20250621_145606.log
+│       │   └── 20250621_145606_params.txt
+│       ├── vgg19_trial2
+│       │   ├── 20250621_161442.csv
+│       │   ├── 20250621_161442.log
+│       │   └── 20250621_161442_params.txt
+│       ├── vgg19_trial3
+│       │   ├── 20250621_172633.csv
+│       │   ├── 20250621_172633.log
+│       │   └── 20250621_172633_params.txt
+│       ├── vgg19_trial4
+│       │   ├── 20250621_172635.csv
+│       │   ├── 20250621_172635.log
+│       │   └── 20250621_172635_params.txt
+│       ├── vgg19_trial5
+│       │   ├── 20250621_172636.csv
+│       │   ├── 20250621_172636.log
+│       │   └── 20250621_172636_params.txt
+│       ├── vgg19_trial6
+│       │   ├── 20250621_172638.csv
+│       │   ├── 20250621_172638.log
+│       │   └── 20250621_172638_params.txt
+│       ├── vgg19_trial7
+│       │   ├── 20250621_184512.csv
+│       │   ├── 20250621_184512.log
+│       │   └── 20250621_184512_params.txt
+│       ├── vgg19_trial8
+│       │   ├── 20250621_184513.csv
+│       │   ├── 20250621_184513.log
+│       │   └── 20250621_184513_params.txt
+│       └── vgg19_trial9
+│           ├── 20250621_184514.csv
+│           ├── 20250621_184514.log
+│           └── 20250621_184514_params.txt
+├── pynaoqi-python2.7-2.8.6.23-linux64-20191127_152327.tar.gz
+├── readme.md
+├── requirements_nao.txt
+├── run.sh
+├── scripts
+│   ├── evaluate.py
+│   ├── extractors
+│   ├── logger_train.py
+│   ├── models
+│   │   └── cnn.py
+│   ├── nao
+│   │   └── nao_actions.py
+│   ├── perception
+│   │   └── perception.py
+│   ├── preprocess.py
+│   ├── sample_generator.py
+│   ├── therapy
+│   │   └── therapy_phases.py
+│   ├── train
+│   │   └── train_cnn.py
+│   └── utils.py
+└── setup.sh
