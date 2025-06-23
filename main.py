@@ -17,8 +17,8 @@ issues on Python 2.7 consoles.
 from __future__ import print_function, unicode_literals
 
 import sys, time
-from config import CHILD, TESTING_ON_PC
-from therapy_phases import run_session
+from config.config import CHILD, TESTING_ON_PC
+from scripts.therapy.therapy_phases import run_session
 
 
 def main():

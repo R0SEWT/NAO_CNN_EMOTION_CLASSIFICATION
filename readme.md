@@ -15,12 +15,12 @@ Crear un sistema de IA que detecte emociones faciales desde la cámara del NAO y
 
 ##  Diagrama de flujo del sistema (NAO)
 
-### 🧠 Diagrama Lógico (alto nivel)
+### 🧠 Diagrama Lógico
 <p align="center">
   <img src="doc/logical_nao_flow.png" alt="Diagrama lógico" width="1000"/>
 </p>
 
-### 🛠️ Diagrama Técnico (estructura del sistema)
+### 🛠️ Diagrama Técnico
 <p align="center">
   <img src="doc/technical_nao_flow.png" alt="Diagrama técnico" width="1000"/>
 </p>
@@ -54,39 +54,81 @@ El flujo del sistema es:
 ## Estructura del repositorio
 
 ```
-NAO/
-├── apiflask/                 # Carpeta con backend Flask en Py3 (uso demodelo y API)
-├── data/                     # Datasets originales o preprocesados
-│   ├── fer2013/              # csv, img sueltas
-│   └── test_imgs/            # Para pruebas en notebooks
-├── models/                   # Modelos guardados (.pt, .h5, etc.)
+.
+├── apiflask/                    # API Flask para detección de emociones
+│   ├── api_emocion.py          # Define los endpoints principales
+│   ├── detectar_emocion.py     # Procesamiento y predicción desde imagen
+│   ├── logs_img/               # Carpeta temporal para imágenes procesadas
+│   ├── utils.py                # Funciones auxiliares
+│   └── webcam_server.py        # Captura de imágenes desde webcam
+│
+├── config/
+│   └── config.py               # Configuraciones generales del sistema
+│
+├── data/                       # Datasets y modelos entrenados
+│   ├── fer2013/                # Dataset original (CSV o imágenes sueltas)
+│   ├── kers2013/               # Dataset en estructura de carpetas
+│   │   ├── train/              # Datos de entrenamiento organizados por clase
+│   │   └── val/                # Datos de validación organizados por clase
+│   ├── kers2013_sample_500_val20/  # Versión reducida del dataset (500 por clase)
+│   │   ├── train/
+│   │   └── val/
+│   ├── models/                 # Modelos entrenados (.pt)
+│   │   ├── *_final.pt          # Modelos finales entrenados manualmente
+│   │   └── *_trialX_best.pt    # Mejores modelos de cada trial de Optuna
+│   ├── README.md               # Documentación de los datasets usados
+│   └── test_imgs/             # Imágenes para pruebas en notebooks
+│
+├── doc/                        # Material de documentación y diagramas
+│   ├── arbol.txt              # Representación textual de la estructura
+│   ├── *.png                  # Diagramas técnicos y lógicos del sistema
+│
+├── environment.yml            # Definición de entorno conda principal
+│
+├── logs/                       # Logs antiguos (puede consolidarse con notebooks/logs/)
+│   └── train/
+│       └── mobilenet/         # Logs por modelo (formato .csv y .log)
+│
+├── main.py                    # Script principal que corre en el NAO (Python 2.7)
+│
+├── models/                     # Carpeta de modelos (duplicado, sugerencia: consolidar)
+│   ├── mobilenet_final.pt
 │   ├── modelo_emocion.h5
-│   ├── cnn/  
-│   ├── keypoints_f/
-│   └── keypoints_p/
-├── notebooks/                # Experimentos y pruebas manuales
-│   ├── logs/
-│   └── 001_test_model1.ipynb ...
-├── scripts/                  # Código fuente general
-│   ├── train/                # Entrenamiento de modelos
-│   │   ├── train_cnn.py
-│   │   ├── train_keypoints_f.py
-│   │   └── train_keypoints_p.py
-│   ├── models/               # Definición de arquitecturas
-│   │   ├── cnn.py
-│   │   └── classifiers.py    # MLP / SVM para keypoints
-│   ├── extractors/           # Extracción de features
-│   │   ├── face_keypoints.py
-│   │   └── pose_keypoints.py
-│   ├── evaluate.py           # Evaluación y comparación
-│   ├── preprocess.py         # Resize, grayscale, crop, etc.
-│   └── utils.py              # Métricas, visualización, timers
-├── main.py                 # Script que corre en NAO (Py2.7)
-├── run.sh                    # Script de ejecución rápida
-├── requirements_backend.txt
-├── requirements_nao.txt
-├── pynaoqi-python2.7-2.8.6.23-linux64-20191127_152327/
-└── README.md       
+│   ├── README.md
+│   └── tasks.md
+│
+├── notebooks/                  # Experimentación y análisis
+│   ├── 001_generate_tree.ipynb              # Genera estructura del proyecto
+│   ├── 101_test_model_basic.ipynb           # Prueba básica del modelo
+│   ├── 102_predict_multiple_images.ipynb    # Predicción en batch
+│   ├── 103_predict_top3_emotions.ipynb      # Predicción top-3
+│   ├── 104_predict_top3_with_logging.ipynb  # Predicción con logging
+│   ├── 203_optuna_hyperparameter_search.ipynb # Optuna tuning
+│   └── logs/                                # Logs de Optuna por modelo/trial
+│       ├── <modelo>_trial<id>/              # Log de cada trial (log, csv, params)
+│       └── *.csv, *.log, *_params.txt       # Resultados por prueba
+│
+├── pynaoqi-*.tar.gz           # SDK del robot NAO (Python 2.7)
+│
+├── readme.md                  # Descripción general del proyecto
+├── requirements_nao.txt       # Requisitos del entorno NAO (Py2.7)
+├── run.sh                     # Script de ejecución rápida
+│
+├── scripts/                   # Código fuente modular
+│   ├── evaluate.py            # Evaluación de modelos
+│   ├── extractors/            # Extracción de keypoints faciales y posturales
+│   ├── logger_train.py        # Logger personalizado por epoch/trial
+│   ├── models/                # Definición de modelos CNN
+│   ├── nao/                   # Acciones del robot NAO
+│   ├── perception/            # Detección y análisis de expresiones
+│   ├── preprocess.py          # Preprocesamiento de imágenes
+│   ├── sample_generator.py    # Generación de datasets reducidos
+│   ├── therapy/               # Flujo lógico de la intervención
+│   └── train/
+│       └── train_cnn.py       # Entrenamiento y logging por trial
+│
+└── setup.sh                   # Instalación automática de entornos
+
 ```
 
 ## 🛠️ Instalación

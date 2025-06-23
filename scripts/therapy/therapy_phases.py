@@ -4,10 +4,12 @@ therapy_phases.py – Fase 1 → Fase 2 → Fase 3
 """
 from __future__ import print_function
 import time
-from nao_actions import say, wake_up, rest, \
+
+
+from scripts.nao_actions import say, wake_up, rest, \
                         gesto_saludo, gesto_brazo_derecho_arriba, \
                         gesto_sorpresa, gesto_confundido
-from perception import capture_frame_b64, detect_emotion
+from scripts.perception import capture_frame_b64, detect_emotion
 
 # ── Fase 1: Captar intención / atención ────────────────────────────────
 def fase1_intencion(child):
