@@ -13,24 +13,6 @@ Crear un sistema de IA que detecte emociones faciales desde la cámara del NAO y
 * Validar el sistema con niños en el FabLab, observando respuestas naturales.
 * Documentar todo el proceso para que sea replicable en otros entornos.
 
-## Desarrollo
-
-El sistema conecta al robot NAO con una API Flask que detecta emociones faciales y le indica cómo responder. La arquitectura tiene cuatro componentes principales:
-
-1. API Flask (Luis):
-NAO captura la imagen del usuario y la expone a un servidor Flask externo con mayor capacidad de cómputo. Este servidor procesa la imagen, ejecuta el modelo de clasificación emocional y devuelve la predicción. Luego, NAO interpreta esta respuesta para ejecutar gestos y frases acordes al estado emocional detectado.
-
-2. Modelos de IA (Rody):
-   Se entrenaron modelos segun las arquitecturas MobileNetV2, VGG19 y un CNN Custom (enfocado en velocidad de inferencia). Se implemento una busqueda de hiperparmetros mediante `optuna` para optimizar la precision de los modelos. Finalmente se selecciono el modelo `MobileNetV2, con un  batch_size: 64, tasa de aprendizaje: 0.2647x10-3, epochs: 10 que obtuvo una presion de 65,91%. Para la prediccion multivariada de las 7 categorias emocionales del FER2013 (35.000 obs).
-
-   Se implemento el servidor de Flask Host donde se recibe la imagen y se preprocesa con un modelo prentenado para la deteccion de rostros, usado para realizar la prediccion entregando la etiqueta mas probable al cliente Flask que establece la comunicacion con NAO.
-
-3. Validación con usuarios (Willian):
-   Se probo en el FabLab
-
-4. Documentación y coordinación (Alejandro):
-   Se documentó todo el proceso 
-
 ## Flujo del sistema
 
 El flujo del sistema es:
