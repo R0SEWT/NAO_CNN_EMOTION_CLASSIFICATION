@@ -152,7 +152,81 @@ Se realizaron pruebas de usabilidad en el fablab logrando predecir la emocion en
 
 Se busca explorar cómo los sistemas de detección emocional pueden integrarse en contextos de robótica social como herramientas de soporte para niños con TEA, siguiendo enfoques vicarios.
 
-Este proyecto se enmarca como investigación aplicada de carácter comparativo, contribuyendo al análisis de técnicas de visión por computadora para contextos sociales asistidos. Se integra una validación práctica con niños autistas en el FabLab de la universidad, aportando evidencia preliminar sobre la viabilidad técnica y pedagógica del enfoque.
+Este proyecto se enmarca como investigación aplicada de carácter comparativo, contribuyendo al análisis de técnicas de visión por computadora para contextos sociales asistidos. Se integrara una validación práctica con niños autistas en el FabLab de la universidad, aportando evidencia preliminar sobre la viabilidad técnica y pedagógica del enfoque.
+
+
+##  Diagrama de flujo del sistema (NAO)
+
+### 🧠 Diagrama Lógico (alto nivel)
+<p align="center">
+  <img src="doc/logical_nao_flow.png" alt="Diagrama lógico" width="1000"/>
+</p>
+
+### 🛠️ Diagrama Técnico (estructura del sistema)
+<p align="center">
+  <img src="doc/technical_nao_flow.png" alt="Diagrama técnico" width="1000"/>
+</p>
+
+
+---
+
+### 🤖 Clasificador de Emociones (Flask + CNN)
+
+Este componente está implementado en Python 3 con Flask y usa un modelo `.h5` entrenado con Keras para clasificar emociones faciales.
+
+#### 📥 Flujo de la API:
+
+1. `main.py` (Python 2.7) envía una imagen codificada en base64 mediante un POST a `/emocion`.
+2. `app.py` (Flask) decodifica la imagen y la convierte a un arreglo NumPy.
+3. Se llama a `detectar_emocion_desde_array()` para detectar el rostro y clasificar la emoción con un modelo CNN.
+4. La emoción se devuelve como un string plano: `"happy"`, `"angry"`, `"neutral"`, etc.
+
+<p align="center">
+  <img src="doc/flask_emotion_api_architecture.png" alt="Arquitectura de la API Flask" width="1000"/>
+</p>
+
+
+### 🧪 Entrenamiento y Optimización del Modelo CNN
+
+El entrenamiento del clasificador emocional se realiza utilizando PyTorch y Optuna para búsqueda de hiperparámetros con pruning. Se exploran tres arquitecturas: `mobilenet`, `vgg19` y un modelo `custom` basado en CNNs simples.
+
+#### 🔍 Proceso de optimización:
+
+- Se prueban diferentes combinaciones de `batch_size` y `learning_rate`.
+- Se ejecutan múltiples `trials` usando `optunahub.AutoSampler` y `MedianPruner`.
+- Se entrena cada modelo con el script `train_cnn.py`.
+- Se reporta el accuracy de validación (`val_accuracy`) en cada epoch.
+- Los trials con bajo rendimiento son descartados anticipadamente.
+
+#### 🧠 Modelos probados:
+- **MobileNetV2**
+- **VGG19**
+- **Custom CNN** (3 conv layers + dense)
+
+#### 💾 Guardado:
+El mejor modelo se guarda automáticamente como `.pt` 
+
+```
+models/{nombre_modelo}_trial{número}_best.pt
+```
+
+Esto permite integrarlo directamente en la API Flask para la detección en tiempo real.
+
+<p align="center">
+  <img src="doc/cnn_training_logical_flow.png" alt="Flujo de entrenamiento y optimización del modelo CNN" width="700"/>
+</p>
+
+📁 Carpeta de datos usada:  
+`/data/kers2013/` (basado en FER2013, preprocesado)
+
+📦 Librerías clave:
+- `optuna`, `optunahub`, `torch`, `tqdm`, `matplotlib`, `pandas`
+
+---
+
+
+
+
 
 
 * Código e instrucciones: [GitHub - Rama `dev`](https://github.com/R0SEWT/NAO_CNN_EMOTION_CLASSIFICATION)
